@@ -59,10 +59,22 @@ const renderData = (data) => {
     })
 }
 const fetchList = async () => {
-    const res = await fetch("/items")
-    const data = await res.json()
-    renderData(data)
+    const access_token = window.localStorage.getItem("token");
+    const res = await fetch('/items', {
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        },
+    });
+    if (res.status === 401) {
+        alert("로그인이 필요합니다!");
+        window.location.pathname = '/login.html';
+        return;
+    }
+    const data = await res.json();
+    renderData(data);
+
 }
+
 
 
 // 채팅 화면이동
@@ -71,6 +83,5 @@ const handleChat = async (event) => {
 }
 const chat = document.querySelector("#chat-div");
 chat.addEventListener("click", handleChat)
-
 
 fetchList();
